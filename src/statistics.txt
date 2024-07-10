@@ -1,0 +1,15 @@
+Data file: threeBlock.bin
+Cache hits: 0
+Disk reads: 0
+Disk writes: 0
+Execution time: 0 ms
+Data file: threeBlock.bin
+Cache hits: 0
+Disk reads: 0
+Disk writes: 0
+Execution time: 0 ms
+Data file: threeBlock.txt
+Cache hits: 249215
+Disk reads: 3
+Disk writes: 6
+Execution time: 75 ms

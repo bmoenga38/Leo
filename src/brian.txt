@@ -1,0 +1,5 @@
+Data file: threeBlock.txt
+Cache hits: 233229
+Disk reads: 3
+Disk writes: 6
+Execution time: 78 ms

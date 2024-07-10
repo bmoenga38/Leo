@@ -1,0 +1,79 @@
+
+
+Invocation and I/O Files
+The program will be invoked from the command-line as:
+%> java HeapSort <data-file-name> <num-buffers> <stat-file-name>
+where: - The file where you have your main() method must be called Heapsort.java
+<data-file-name> is the file to be sorted. The sorting takes place in that file, so this program will modify 
+the input data file.
+
+ Be careful to keep a copy of the original when you do your testing.
+
+<num-buffers> determines the number of buffers allocated for the buffer pool. This value will be in the range 1-20.
+<stat-file-name> is the name of a file that your program will generate to store runtime statistics; see below for more information.
+At the end of your program, the data file (on disk) should be in a sorted state. 
+
+Do not forget to flush buffers from your buffer pool as necessary at the end,
+
+ or they will not update the file correctly. 
+ In addition to sorting the data file, you will generate and output some statistics about the execution of your program.
+  Write these statistics to <stat-file-name>. Make sure your program DOES NOT overwrite <stat file name> each time it is run; 
+  instead, have it append new statistics to the end of the file.
+   The information to write is as follows.
+
+1. The name of the data file being sorted.
+2. The number of cache hits, or times your program found the data it needed in a buffer and did not have to go to the disk.
+3. The number of disk reads, or times your program had to read a block of data from the disk into the buffer.
+4. The number of disk writes, or times your program had to write a block of data to disk from a buffer.
+5. Print to standard out, the time that your program took to execute the HeapSort. Put two calls to the standard Java timing method
+System.currentTimeMillis() into your program, one when you call the sort function, and one when you return from the sort function. This method returns
+a long value. The difference between the values will be the total runtime in milliseconds. You should ONLY time the sort, and not the time to write the stats output as described above.
+Design Considerations
+The primary design concern for this project will be the interaction between the logical heap as viewed by the HeapSort algorithm, and the physical representation of the heap as implemented by the disk file mediated by the buffer pool. 
+In essence, the disk file will be the heap array, and all accesses to the heap from the HeapSort algorithm will be in the form of requests to the buffer pool for specific bytes from the file. You should implement the buffer pool interface using the "message passing" approach shown in Module 9.4.1.3. The buffer pool interface should pass byte arrays back and forth, not "records" as the HeapSort algorithm understands them.
+Be aware that performance does play an issue in the grading for this program - some of the tests will be timed. If your program takes significantly longer than it should, then it will be penalized. So another design consideration will be the efficiency of your program, because some of the test cases are timed. 
+If you are careless about how you implement the buffer pool, or in how much unnecessary disk visits (reads or writes) you do within your HeapSort implementation, then you will not be able to meet the time requirements. We are not going to check exactly what blocks are swapped in and out of the buffer pool. Therefore, there is room for different approaches to tuning your HeapSort and buffer pool implementations as needed to meet the efficiency requirements.
+
+
+
+
+
+For this project, you will implement an external sorting algorithm for binary data. 
+This project is a little different from previous projects in that you will be doing disk I/O on a random access file. 
+
+The input datafile will consist of many 4-byte records, with each record consisting of two 2-byte (short) integer values in the range 0 to 30,000.
+The first 2-byte field is the key value (used for sorting) and the second 2-byte field contains a data value.
+ The input file is guaranteed to be a multiple of 4096 bytes.
+All I/O operations will be done on blocks of size 4096 bytes (i.e., 1024 logical records).  1 gb
+
+Warning: The data file is a binary file, not a text file. 
+You can generate a .txt file which is readable as text by text editors using the starter code. 
+BUT the underlying data in it is still just bytes representing records that each have a fixed-length.
+
+         Expectation of the Program
+~Your program will sort the file (in ascending order), using a modified version of Heapsort.
+The modification comes in the interaction between the Heapsort algorithm and the file storing the data.
+The array being sorted will be the file itself, rather than an array stored in memory.
+
+ All accesses to the file will be mediated by a buffer pool. 
+The buffer pool will store 4096-byte blocks (1024 records).
+ The buffer pool will be organized using the Least Recently Used (LRU) replacement scheme.
+See OpenDSA Module 9.4 for more information about buffer pools.
+
+Note: You are NOT implementing the external sorting algorithm described in Module 9.6 of OpenDSA. 
+That is a two-step ReplacementSelection + MergeSort algorithm.
+
+Instead, what you are implementing is a standard in-memory HeapSort athat has been modified to use a "virtual memory" in the form of a large heap array stored on disk. 
+The primary modification to your HeapSort algorithm from the in-memory version is to change the in-memory heap access into accesses to the disk file (these accesses actually come through the buffer pool).
+Special Notes:
+- Read the starter code to see some examples of how to work with binary data, RandomAccessFile, and records. 
+- Your submission will be stress-tested for scalable performance. Since this takes up many resources, Web-CAT will not run mutation testing on your submission. 
+- This project reads and writes to a single file of records, which persists after the program or test ends. Accidentally reusing a file leads to mistakes. 
+Sorting an already-sorted file is often not helpful for testing or debugging. Ensure that your testing setup has a 'clean, consistent environment' to avoid 
+   confusing issues that pop up from this.
+ - Good design will go a long way toward simplifying this project.
+ - Java's ByteBuffer class is useful for serializing and deserializing the record.
+
+
+ javac Heapsort.java Buffer.java BufferPool.java ExternalHeapSort.java Stat.java
+ java Heapsort threeBlock.txt 3 statistics.txt
